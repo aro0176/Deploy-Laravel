@@ -1,0 +1,9 @@
+---
+ nom_site: "{{ site_name }}"
+ dossier_user: /home/{{ user }}/{{ nom_site }}
+ dossier_app: /var/www/{{ nom_site }}
+ url_site: "{{ site_name }}"
+ git_url: "{{ git_repo }}"
+ config_apache: "{{ nom_site }}"
+ addr_bdd: "{{ adress_bdd }}"
+...

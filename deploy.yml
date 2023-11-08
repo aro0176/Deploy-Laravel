@@ -1,0 +1,28 @@
+---
+ - name: Installation Base de Donnée
+   hosts: database
+   remote_user: "{{ user }}"
+   become: yes
+
+   roles:
+  #   - BDD
+
+ - name: Installation Serveur web
+   hosts: webserver
+   remote_user: "{{ user }}"
+   vars: 
+     paquets: 
+       - php8.2
+       - php8.2-cli
+       - php8.2-xml
+       - php8.2-curl
+       - php8.2-sybase
+       - php8.2-pgsql
+       - php8.2-gd
+       - php8.2-fpm
+       - php8.2-zip
+       - php8.2-mbstring
+
+   roles: 
+     - Site 
+...

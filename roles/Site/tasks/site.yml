@@ -1,0 +1,102 @@
+---
+ - become: yes
+   apt:
+     update_cache: yes
+
+ - name: Création Dossier utilisateur
+   become: yes
+   file:
+     path: "{{ dossier_user }}"
+     state: directory
+     owner: "{{ user }}"
+     group: "{{ user }}"
+     mode: 0775
+
+ - name: Création Dossier www
+   become: yes
+   file:
+     src: "{{ dossier_user }}"
+     dest: "{{ dossier_app }}"
+     state: link
+     owner: "{{ user }}"
+     group: "{{ user }}"
+     mode: 0775
+
+ - name: Clonez l'application
+   git:
+     repo: "{{git_url }}"
+     dest: "{{ dossier_user }}"
+
+ - name: Mise à jour composer
+   command: composer self-update
+   args:
+     chdir: "{{ dossier_user }}"
+
+ - name: Installation dépendance
+   command: composer install
+   args:
+     chdir: "{{ dossier_user }}"  
+ 
+ - name: Copie la configuration spécifique     
+   shell: cp -vf .env.example .env
+   args:
+     chdir: "{{ dossier_user }}"
+
+ - name: Modification l'URL Base De Donnée
+   lineinfile:
+     path: "{{ dossier_user }}/.env"
+     regexp: "^DB_HOST"
+     line: "DB_HOST={{ addr_bdd }}"
+ 
+ - lineinfile:
+     path: "{{ dossier_user }}/.env"
+     regexp: "^DB_DATABASE"
+     line: "DB_DATABASE={{ name_bdd }}"
+
+ - lineinfile:
+     path: "{{ dossier_user }}/.env"
+     regexp: "^DB_USERNAME"
+     line: "DB_USERNAME={{ user_bdd }}"
+
+ - lineinfile:
+     path: "{{ dossier_user }}/.env"
+     regexp: "^DB_PASSWORD"
+     line: "DB_PASSWORD={{ pass_bdd }}" 
+
+ - name: Générer une clé d'application
+   command: php artisan key:generate
+   args:
+     chdir: "{{ dossier_user }}"
+
+ - name: Migration base de donnée
+   command: php artisan migrate
+   args:
+     chdir: "{{ dossier_user }}"
+
+ - name: Pipeline base de donné
+   command: php artisan db:seed
+   args:
+     chdir: "{{ dossier_user }}"
+
+ - name: Configuration virtual host
+   become: yes
+   template:
+     src: monappli.conf.j2
+     dest: /etc/apache2/sites-available/{{ config_apache }}
+   notify: Restart apache
+
+ - name: Activer module apache
+   become: yes
+   command: a2enmod rewrite
+   notify: Restart apache
+
+ - name: Activer module php
+   become: yes
+   command: a2enmod php8.2
+   notify: Restart apache
+
+ - name: Activer le site
+   become: yes
+   command: "a2ensite {{ config_apache }}"
+   notify: Restart apache
+...

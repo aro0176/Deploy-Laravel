@@ -1,0 +1,6 @@
+---
+ database_name: "{{ name_bdd }}"
+ database_user: "{{ user_bdd }}"
+ database_password: "{{ pass_bdd }}"
+...
+~            

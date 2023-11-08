@@ -1,0 +1,11 @@
+---
+ - name: Restart apache
+   service:
+     name: apache2
+     state: reloaded
+
+ - name: Restart php service
+   service:
+     name: php8.2-fpm
+     state: reloaded
+...
