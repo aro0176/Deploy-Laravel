@@ -39,6 +39,5 @@
    command: >
      psql -c "ALTER DATABASE {{ database_name }} OWNER TO {{ database_user }};"
    ignore_errors: yes
-   notify: restart Postgres
-
+   notify: Restart postgresql
 ...
