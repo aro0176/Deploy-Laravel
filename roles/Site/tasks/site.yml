@@ -72,17 +72,12 @@
    command: php artisan migrate
    args:
      chdir: "{{ dossier_user }}"
-
- - name: Pipeline base de donné
-   command: php artisan db:seed
-   args:
-     chdir: "{{ dossier_user }}"
-
+     
  - name: Configuration virtual host
    become: yes
    template:
      src: monappli.conf.j2
-     dest: /etc/apache2/sites-available/{{ config_apache }}
+     dest: /etc/apache2/sites-available/{{ config_apache }}.conf
    notify: Restart apache
 
  - name: Activer module apache
@@ -97,6 +92,6 @@
 
  - name: Activer le site
    become: yes
-   command: "a2ensite {{ config_apache }}"
+   command: "a2ensite {{ config_apache }}.conf"
    notify: Restart apache
 ...
