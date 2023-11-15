@@ -8,6 +8,7 @@
      state: present
 
  - name: Ajouter dans list repo le source php 
+   become: yes
    template:
      src: add_repository_php.list.j2
      dest: /etc/apt/sources.list.d/ondrej-php-focal.list
