@@ -13,6 +13,14 @@
      src: add_repository_php.list.j2
      dest: /etc/apt/sources.list.d/ondrej-php-focal.list
 
+ - shell: apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 4F4EA0AAE5267A6C
+   become: yes
+   become_method: sudo
+
+ - shell: gpg --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C && gpg --export --armor 4F4EA0AAE5267A6C | sudo apt-key add -
+   become: yes
+   become_method: sudo
+
  - name: Mise à jour liste des paquets
    become: yes
    apt:
